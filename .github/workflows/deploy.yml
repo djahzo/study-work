@@ -6,93 +6,35 @@ on:
 
 jobs:
   deploy-web:
-    name: Deploy Next.js → Vercel (prebuilt)
+    name: Deploy Next.js → Vercel
     runs-on: ubuntu-latest
     environment: production
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Link Vercel project (web)
-        run: |
-          mkdir -p apps/web/.vercel
-          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > apps/web/.vercel/project.json
-        env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
-
-      - name: Vercel build (web)
-        run: vercel build --prod --yes --token "$VERCEL_TOKEN" --cwd "$GITHUB_WORKSPACE/apps/web"
-        env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Vercel deploy prebuilt (web)
-        run: vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN" --cwd "$GITHUB_WORKSPACE/apps/web"
-        env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+      - name: Deploy to Vercel (web)
+        run: vercel deploy --prod --yes --token "$VERCEL_TOKEN"
 
   deploy-client:
-    name: Deploy Vite → Vercel (prebuilt)
+    name: Deploy Vite → Vercel
     runs-on: ubuntu-latest
     environment: production
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_CLIENT }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Link Vercel project (client)
-        run: |
-          mkdir -p apps/client/.vercel
-          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > apps/client/.vercel/project.json
-        env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_CLIENT }}
-
-      - name: Vercel build (client)
-        run: vercel build --prod --yes --token "$VERCEL_TOKEN" --cwd "$GITHUB_WORKSPACE/apps/client"
-        env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_CLIENT }}
-          VITE_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Vercel deploy prebuilt (client)
-        run: vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN" --cwd "$GITHUB_WORKSPACE/apps/client"
-        env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_CLIENT }}
+      - name: Deploy to Vercel (client)
+        run: vercel deploy --prod --yes --token "$VERCEL_TOKEN"
