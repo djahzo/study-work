@@ -8,9 +8,9 @@ const supabase = createClient(
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params
+  const { id } = await params
 
   const { data, error } = await supabase
     .from("posts")
@@ -27,9 +27,9 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params
+  const { id } = await params
   const body = await req.json()
 
   const { data, error } = await supabase
@@ -48,9 +48,9 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params
+  const { id } = await params
 
   const { error } = await supabase.from("posts").delete().eq("id", id)
 
