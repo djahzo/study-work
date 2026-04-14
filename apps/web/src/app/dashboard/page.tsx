@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation"
+import Link from "next/link"
 import { createClient } from "@/lib/supabase-server"
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card"
 import { Badge } from "@repo/ui/badge"
+import { Button } from "@repo/ui/button"
 import { Avatar, AvatarFallback } from "@repo/ui/avatar"
+import { DashboardActions } from "@/components/DashboardActions"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -22,14 +25,19 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-14 w-14">
-            <AvatarFallback className="text-lg">{initials}</AvatarFallback>
-          </Avatar>
-          <div>
-            <h1 className="text-2xl font-bold">你好，{name}</h1>
-            <p className="text-muted-foreground text-sm">{user.email}</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Avatar className="h-14 w-14">
+              <AvatarFallback className="text-lg">{initials}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-2xl font-bold">你好，{name}</h1>
+              <p className="text-muted-foreground text-sm">{user.email}</p>
+            </div>
           </div>
+          <Button asChild>
+            <Link href="/dashboard/posts/new">写文章</Link>
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -65,15 +73,26 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             {!posts || posts.length === 0 ? (
-              <p className="text-muted-foreground text-sm py-4 text-center">还没有文章，去写第一篇吧！</p>
+              <p className="text-muted-foreground text-sm py-4 text-center">
+                还没有文章，
+                <Link href="/dashboard/posts/new" className="underline">去写第一篇吧</Link>！
+              </p>
             ) : (
               <ul className="divide-y">
                 {posts.map((post) => (
                   <li key={post.id} className="py-3 flex items-center justify-between gap-3">
-                    <span className="text-sm font-medium truncate">{post.title}</span>
-                    <Badge variant={post.published ? "default" : "secondary"}>
-                      {post.published ? "已发布" : "草稿"}
-                    </Badge>
+                    <Link
+                      href={`/posts/${post.id}`}
+                      className="text-sm font-medium truncate hover:underline"
+                    >
+                      {post.title}
+                    </Link>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge variant={post.published ? "default" : "secondary"}>
+                        {post.published ? "已发布" : "草稿"}
+                      </Badge>
+                      <DashboardActions id={post.id} published={post.published} />
+                    </div>
                   </li>
                 ))}
               </ul>

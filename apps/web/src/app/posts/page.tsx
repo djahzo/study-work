@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { createClient } from "@supabase/supabase-js"
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card"
 import { Button } from "@repo/ui/button"
@@ -27,30 +28,36 @@ export default async function PostsPage() {
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Posts</h1>
-          <Button>New Post</Button>
+          <h1 className="text-3xl font-bold">文章</h1>
+          <Button asChild>
+            <Link href="/dashboard/posts/new">写文章</Link>
+          </Button>
         </div>
 
         {posts.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              No posts yet. Be the first to publish one!
+              还没有文章，来写第一篇吧！
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
             {posts.map((post) => (
-              <Card key={post.id}>
+              <Card key={post.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
-                  <CardTitle className="text-xl">{post.title}</CardTitle>
+                  <CardTitle className="text-xl">
+                    <Link href={`/posts/${post.id}`} className="hover:underline">
+                      {post.title}
+                    </Link>
+                  </CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    By {post.author?.name ?? post.author?.email} · {formatDate(post.created_at)}
+                    {post.author?.name ?? post.author?.email} · {formatDate(post.created_at)}
                   </p>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">{truncate(post.content, 200)}</p>
-                  <Button variant="outline" className="mt-4">
-                    Read More
+                  <Button variant="outline" className="mt-4" asChild>
+                    <Link href={`/posts/${post.id}`}>阅读全文</Link>
                   </Button>
                 </CardContent>
               </Card>
