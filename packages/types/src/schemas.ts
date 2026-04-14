@@ -25,3 +25,4 @@ export const postSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>
 export type RegisterInput = z.infer<typeof registerSchema>
 export type PostInput = z.output<typeof postSchema>
+export type PostFormInput = z.input<typeof postSchema>

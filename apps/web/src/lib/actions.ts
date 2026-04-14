@@ -9,7 +9,7 @@ export async function signIn(_prev: unknown, formData: FormData) {
   const raw = { email: formData.get("email"), password: formData.get("password") }
   const parsed = loginSchema.safeParse(raw)
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message }
+    return { error: parsed.error.issues[0]?.message }
   }
 
   const supabase = await createClient()
@@ -28,7 +28,7 @@ export async function signUp(_prev: unknown, formData: FormData) {
   }
   const parsed = registerSchema.safeParse(raw)
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message }
+    return { error: parsed.error.issues[0]?.message }
   }
 
   const supabase = await createClient()
@@ -63,7 +63,7 @@ export async function createPost(_prev: unknown, formData: FormData) {
   }
   const parsed = postSchema.safeParse(raw)
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message }
+    return { error: parsed.error.issues[0]?.message }
   }
 
   const { error } = await supabase
@@ -91,7 +91,7 @@ export async function updatePost(_prev: unknown, formData: FormData) {
   }
   const parsed = postSchema.safeParse(raw)
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message }
+    return { error: parsed.error.issues[0]?.message }
   }
 
   const { error } = await supabase

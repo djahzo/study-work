@@ -4,7 +4,7 @@ import { Button } from "@repo/ui/button"
 import { Input } from "@repo/ui/input"
 import { Label } from "@repo/ui/label"
 import { Textarea } from "@repo/ui/textarea"
-import { postSchema, type PostInput, type Post } from "@repo/types"
+import { postSchema, type PostInput, type PostFormInput, type Post } from "@repo/types"
 import { useCreatePost, useUpdatePost } from "../hooks/usePosts"
 import { useAuthStore } from "../store/auth"
 import { toast } from "sonner"
@@ -29,7 +29,7 @@ export function PostForm({ post, onSuccess }: PostFormProps) {
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<PostInput>({
+  } = useForm<PostFormInput, unknown, PostInput>({
     resolver: zodResolver(postSchema),
     defaultValues: post
       ? { title: post.title, content: post.content, cover_url: post.cover_url, published: post.published }
